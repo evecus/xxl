@@ -21,6 +21,7 @@ const NUM_COLUMNS = 5
 
 export interface TVLeaderboardGridPanelType {
   focusTopBar: () => void
+  restoreFocus: () => void
 }
 
 export default memo(forwardRef<TVLeaderboardGridPanelType>((_, ref) => {
@@ -32,10 +33,18 @@ export default memo(forwardRef<TVLeaderboardGridPanelType>((_, ref) => {
   const [activeSource, setActiveSource] = useState<LX.OnlineSource>(sources[0] ?? 'kw')
   const [boardList, setBoardList] = useState<BoardItem[]>([])
   const firstTabRef = useRef<TVButtonType>(null)
+  const lastFocusedCardRef = useRef<TVButtonType | null>(null)
 
   useImperativeHandle(ref, () => ({
     focusTopBar() {
       firstTabRef.current?.requestFocus()
+    },
+    restoreFocus() {
+      if (lastFocusedCardRef.current) {
+        lastFocusedCardRef.current.requestFocus()
+      } else {
+        firstTabRef.current?.requestFocus()
+      }
     },
   }))
 
@@ -59,8 +68,9 @@ export default memo(forwardRef<TVLeaderboardGridPanelType>((_, ref) => {
     loadBoards(source)
   }
 
-  const handleOpenBoard = (board: BoardItem) => {
+  const handleOpenBoard = (board: BoardItem, btnRef: TVButtonType) => {
     if (!commonState.componentIds.home) return
+    lastFocusedCardRef.current = btnRef
     navigations.pushTVMusicDetailScreen(commonState.componentIds.home, {
       type: 'leaderboard',
       id: board.id,
@@ -108,26 +118,34 @@ export default memo(forwardRef<TVLeaderboardGridPanelType>((_, ref) => {
         contentContainerStyle={s.gridContent}
         renderItem={({ item }) => {
           if (!item.name) return <View style={s.cardWrap} />
-          return (
-            <View style={s.cardWrap}>
-              <TVButton
-                style={[s.card, { backgroundColor: theme['c-primary-background'] }]}
-                borderRadius={8}
-                onPress={() => handleOpenBoard(item)}
-                onFocus={() => setFocusZone('content')}
-              >
-                <Text size={14} color={theme['c-primary']} style={s.cardLabel}>排行榜</Text>
-              </TVButton>
-              <Text style={s.cardName} size={12} color={theme['c-font']} numberOfLines={2}>
-                {item.name}
-              </Text>
-            </View>
-          )
+          return <BoardCard item={item} theme={theme} onOpen={handleOpenBoard} />
         }}
       />
     </View>
   )
 }))
+
+const BoardCard = memo(({ item, theme, onOpen }: {
+  item: BoardItem
+  theme: any
+  onOpen: (board: BoardItem, btn: TVButtonType) => void
+}) => {
+  const btnRef = useRef<TVButtonType>(null)
+  return (
+    <View style={s.cardWrap}>
+      <TVButton
+        ref={btnRef}
+        style={[s.card, { backgroundColor: theme['c-primary-background'] }]}
+        borderRadius={8}
+        onPress={() => { if (btnRef.current) onOpen(item, btnRef.current) }}
+        onFocus={() => setFocusZone('content')}
+      >
+        <Text size={14} color={theme['c-primary']} style={s.cardLabel}>排行榜</Text>
+      </TVButton>
+      <Text style={s.cardName} size={12} color={theme['c-font']} numberOfLines={2}>{item.name}</Text>
+    </View>
+  )
+})
 
 const s = StyleSheet.create({
   root: { flex: 1 },
