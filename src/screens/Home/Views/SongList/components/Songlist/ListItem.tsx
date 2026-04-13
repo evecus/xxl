@@ -8,6 +8,7 @@ import { NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import { useTheme } from '@/store/theme/hook'
 import Image from '@/components/common/Image'
 import TVButton from '@/components/common/TVButton'
+import { setFocusZone } from '@/screens/Home/TV/index'
 
 const gap = scaleSizeW(15)
 const IMG_PADDING = 4  // 图片与焦点框的间距，可按需调整
@@ -28,6 +29,7 @@ export default memo(({ item, index, width, showSource, onPress }: {
           <View style={{ ...styles.listItem, width: itemWidth }}>
             <TVButton
               onPress={handlePress}
+              onFocus={() => setFocusZone('content')}
               borderRadius={4}
               style={{ padding: IMG_PADDING }}
             >
