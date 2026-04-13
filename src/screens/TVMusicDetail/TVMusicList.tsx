@@ -18,7 +18,7 @@ import TVListItem, { MyListItem, ITEM_HEIGHT, type TVListItemHandle } from './TV
 import { useI18n } from '@/lang'
 
 const PAGE_SIZE = 10  // 每页10首，左右各5行
-const COL_SIZE  = PAGE_SIZE / 2  // 每列8行
+const COL_SIZE  = PAGE_SIZE / 2  // 每列5行
 
 // ─── ref 存储结构 ─────────────────────────────────────────────────────────────
 interface RowRefs {
