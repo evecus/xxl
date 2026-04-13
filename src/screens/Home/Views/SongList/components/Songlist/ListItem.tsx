@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import { View, Platform } from 'react-native'
 import { createStyle } from '@/utils/tools'
 import { type ListInfoItem } from '@/store/songlist/state'
@@ -7,7 +7,7 @@ import { scaleSizeW } from '@/utils/pixelRatio'
 import { NAV_SHEAR_NATIVE_IDS } from '@/config/constant'
 import { useTheme } from '@/store/theme/hook'
 import Image from '@/components/common/Image'
-import TVButton from '@/components/common/TVButton'
+import TVButton, { type TVButtonType } from '@/components/common/TVButton'
 import { setFocusZone } from '@/screens/Home/TV/index'
 
 const gap = scaleSizeW(15)
@@ -17,17 +17,19 @@ export default memo(({ item, index, width, showSource, onPress }: {
   index: number
   showSource: boolean
   width: number
-  onPress: (item: ListInfoItem, index: number) => void
+  onPress: (item: ListInfoItem, index: number, btn: TVButtonType) => void
 }) => {
   const theme = useTheme()
+  const btnRef = useRef<TVButtonType>(null)
   const itemWidth = width - gap
-  const handlePress = () => { onPress(item, index) }
+  const handlePress = () => { if (btnRef.current) onPress(item, index, btnRef.current) }
   return (
     item.source
       ? (
           // TVButton 只包裹图片区域，文字在外部，焦点框只框图片
           <View style={{ ...styles.listItem, width: itemWidth }}>
             <TVButton
+              ref={btnRef}
               onPress={handlePress}
               onFocus={() => setFocusZone('content')}
               borderRadius={4}
