@@ -399,10 +399,9 @@ export default memo(({ componentId }: { componentId: string }) => {
 
     // 遥控器返回键：直接 pop 回主页
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      void pop(commonState.componentIds.playDetail!).then(() => {
-        // 通知 TV home 把焦点还给侧边栏播放按钮
-        global.state_event.emit('tvPlayDetailPopped')
-      })
+      // 先通知主页把焦点设好，再 pop
+      global.state_event.emit('tvPlayDetailWillPop')
+      void pop(commonState.componentIds.playDetail!)
       return true
     })
 
