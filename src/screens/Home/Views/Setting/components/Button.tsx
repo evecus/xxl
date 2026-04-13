@@ -1,6 +1,7 @@
 import { memo } from 'react'
 
 import TVButton from '@/components/common/TVButton'
+import { setFocusZone } from '@/screens/Home/TV/index'
 import Text from '@/components/common/Text'
 import { useTheme } from '@/store/theme/hook'
 import { createStyle } from '@/utils/tools'
@@ -21,6 +22,7 @@ export default memo(({ disabled, onPress, children, hasTVPreferredFocus, style }
     <TVButton
       style={[{ ...styles.button, backgroundColor: theme['c-button-background'] }, style]}
       onPress={onPress}
+      onFocus={() => setFocusZone('content')}
       disabled={disabled}
       hasTVPreferredFocus={hasTVPreferredFocus}
       borderRadius={4}
