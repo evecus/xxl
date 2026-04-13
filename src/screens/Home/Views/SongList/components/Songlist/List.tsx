@@ -15,7 +15,8 @@ import { type TVButtonType } from '@/components/common/TVButton'
 type FlatListType = FlatListProps<ListInfoItem>
 
 // const MAX_WIDTH = scaleSizeW(110)
-const MIN_WIDTH = scaleSizeW(110)
+// const MIN_WIDTH = scaleSizeW(110)
+const NUM_COLUMNS = 5
 const GAP = scaleSizeW(20)
 
 export interface ListProps {
@@ -59,7 +60,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
     <ListItem
       item={item}
       index={index}
-      width={rowInfo.width}
+      width={itemWidth}
       showSource={showSource}
       onPress={onOpenDetail}
     />
@@ -112,22 +113,12 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
   // }, [width])
   // console.log(Math.trunc(width * 0.125), itemWidth)
   // console.log(itemWidth, MIN_WIDTH, GAP, width)
-  const rowInfo = useMemo(() => {
-    let w = width - GAP
-    let n = width / (MIN_WIDTH + GAP)
-    if (n > 10) n = 10
-    let computedItemWidth = Math.floor(w / n)
-    const num = Math.max(Math.floor(width / computedItemWidth), 2)
-    return {
-      num,
-      width: (width - GAP) / num,
-    }
-  }, [width])
+  const itemWidth = useMemo(() => (width - GAP) / NUM_COLUMNS, [width])
   // console.log(rowNum)
   const list = useMemo(() => {
     const list = [...currentList]
-    let whiteItemNum = (list.length % rowInfo.num)
-    if (whiteItemNum > 0) whiteItemNum = rowInfo.num - whiteItemNum
+    let whiteItemNum = (list.length % NUM_COLUMNS)
+    if (whiteItemNum > 0) whiteItemNum = NUM_COLUMNS - whiteItemNum
     for (let i = 0; i < whiteItemNum; i++) {
       list.push({
         id: `white__${i}`,
@@ -141,7 +132,7 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
       })
     }
     return list
-  }, [currentList, rowInfo])
+  }, [currentList])
   // console.log(listInfo.list.map((item) => item.id))
 
   return (
@@ -151,11 +142,11 @@ export default forwardRef<ListType, ListProps>(({ onRefresh, onLoadMore, onOpenD
           ? null
           : (
               <FlatList
-                key={String(rowInfo.num)}
+                key={String(NUM_COLUMNS)}
                 ref={flatListRef}
                 style={styles.list}
                 columnWrapperStyle={{ justifyContent: 'space-evenly' }}
-                numColumns={rowInfo.num}
+                numColumns={NUM_COLUMNS}
                 data={list}
                 maxToRenderPerBatch={4}
                 // updateCellsBatchingPeriod={80}
