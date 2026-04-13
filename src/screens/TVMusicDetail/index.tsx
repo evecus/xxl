@@ -66,7 +66,7 @@ export default ({ componentId, params }: { componentId: string; params: TVMusicD
       <View style={[styles.root, { paddingTop: statusBarHeight }]}>
         {/* 顶部栏 */}
         <View style={[styles.topBar, { borderBottomColor: theme['c-border-background'] }]}>
-          <Text style={styles.title} size={18} numberOfLines={1} color={theme['c-font']}>
+          <Text style={styles.title} size={20} numberOfLines={1} color={theme['c-font']}>
             {params.name}
           </Text>
           <View style={styles.actions}>
@@ -74,7 +74,7 @@ export default ({ componentId, params }: { componentId: string; params: TVMusicD
             {params.type === 'songlist'
               ? (
                   <TVButton style={styles.actionBtn} borderRadius={6} onPress={handleCollect}>
-                    <Text size={14} color={theme['c-primary']}>收藏歌单</Text>
+                    <Text size={16} color={theme['c-primary']}>收藏歌单</Text>
                   </TVButton>
                 )
               : null
