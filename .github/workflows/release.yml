@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  # 支持手动触发，不用每次都 push
+  workflow_dispatch:
+  #push:
+   # branches:
+     # - master
+
+jobs:
+  Android:
+    name: Android
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out git repository
+        uses: actions/checkout@v4
+
+      - name: Setup Env
+        uses: ./.github/actions/setup
+
+      - name: Get build tag
+        run: |
+          BUILD_TAG=$(date +'%Y%m%d_%H%M%S')
+          echo "PACKAGE_VERSION=$BUILD_TAG" >> $GITHUB_ENV
+
+      - name: Build Packages
+        env:
+          DISABLE_SVG: 1
+        shell: bash
+        run: |
+          cd android
+          chmod +x gradlew
+          # 直接使用项目自带的 debug.keystore，无需配置任何 Secrets
+          # debug.keystore 固定参数：alias=androiddebugkey password=android
+          ./gradlew assembleRelease \
+            -PMYAPP_UPLOAD_STORE_FILE='debug.keystore' \
+            -PMYAPP_UPLOAD_KEY_ALIAS='androiddebugkey' \
+            -PMYAPP_UPLOAD_STORE_PASSWORD='android' \
+            -PMYAPP_UPLOAD_KEY_PASSWORD='android'
+
+      - name: Get package version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+
+      - name: Generate file MD5
+        run: |
+          cd android/app/build/outputs/apk/release
+          md5sum *.apk
+
+      - name: Upload Artifact
+        uses: ./.github/actions/upload-artifact
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          name: ${{ env.PACKAGE_VERSION }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: false
+          files: |
+            android/app/build/outputs/apk/release/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
