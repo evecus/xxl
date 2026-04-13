@@ -10,8 +10,10 @@ import Badge, { type BadgeType } from '@/components/common/Badge'
 import { Icon } from '@/components/common/Icon'
 import { useTheme } from '@/store/theme/hook'
 import TVButton, { type TVButtonType } from '@/components/common/TVButton'
+import { scaleSizeH } from '@/utils/pixelRatio'
+import { LIST_ITEM_HEIGHT } from '@/config/constant'
 
-export const ITEM_HEIGHT = 56
+export const ITEM_HEIGHT = (scaleSizeH(LIST_ITEM_HEIGHT) * 1.15) || (LIST_ITEM_HEIGHT * 1.15)
 
 export interface TVListItemHandle {
   /** 焦点到主按钮 */
