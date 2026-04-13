@@ -7,7 +7,6 @@ import { useEffect, useRef, useState, useCallback, memo, forwardRef, useImperati
 import { View, StyleSheet, Modal, ScrollView } from 'react-native'
 import { useTheme } from '@/store/theme/hook'
 import TVButton, { type TVButtonType } from '@/components/common/TVButton'
-import { Icon } from '@/components/common/Icon'
 import Text from '@/components/common/Text'
 import List, { type ListType } from '@/screens/Home/Views/SongList/List'
 import TagGroup, { type TagGroupProps } from '@/screens/Home/Views/SongList/TagList/TagGroup'
@@ -236,7 +235,7 @@ export default memo(forwardRef<TVSongListPanelType>((_, ref) => {
         <View style={s.spacer} />
         <OpenList ref={openListRef} />
         <TVButton style={s.filterBtn} onPress={handleOpenFilter} onFocus={() => setFocusZone('topbar')}>
-          <Icon name="slider" size={20} color={theme['c-font']} />
+          <Text color={theme['c-font']}>筛选</Text>
         </TVButton>
       </View>
 
