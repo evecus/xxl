@@ -3,9 +3,9 @@ name: Build
 on:
   # 支持手动触发，不用每次都 push
   workflow_dispatch:
-  push:
-    branches:
-      - master
+  #push:
+  #  branches:
+    #  - master
 
 jobs:
   Android:
