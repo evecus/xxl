@@ -56,6 +56,8 @@ export const MyListItem = forwardRef<TVListItemHandle, {
   const theme = useTheme()
   const mainRef = useRef<TVButtonType>(null)
   const moreRef = useRef<TVButtonType>(null)
+  const isShowAlbumName = useSettingValue('list.isShowAlbumName')
+  const isShowInterval = useSettingValue('list.isShowInterval')
 
   useImperativeHandle(ref, () => ({
     focusMain() { mainRef.current?.requestFocus() },
@@ -67,6 +69,11 @@ export const MyListItem = forwardRef<TVListItemHandle, {
       onShowMenu(item, index, { x: Math.ceil(px), y: Math.ceil(py), w: Math.ceil(width), h: Math.ceil(height) })
     })
   }
+
+  const subParts: string[] = [item.singer]
+  if (isShowAlbumName && item.meta.albumName) subParts.push(item.meta.albumName)
+  if (isShowInterval && item.interval) subParts.push(item.interval)
+  const subText = subParts.join(' · ')
 
   return (
     <View style={[styles.row, { height: ITEM_HEIGHT }]}>
@@ -90,9 +97,11 @@ export const MyListItem = forwardRef<TVListItemHandle, {
             <Text numberOfLines={1} size={15} color={theme['c-primary']}>
               {item.name}
             </Text>
-            <Text style={styles.subInfo} size={12} color={theme['c-500']} numberOfLines={1}>
-              {item.singer}
-            </Text>
+            <View style={styles.subRow}>
+              <Text style={styles.subInfo} size={12} color={theme['c-500']} numberOfLines={1}>
+                {subText}
+              </Text>
+            </View>
           </View>
         </View>
       </TVButton>
