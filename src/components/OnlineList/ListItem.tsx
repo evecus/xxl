@@ -53,7 +53,11 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
     }
   }
   const tagInfo = useQualityTag(item)
-  const singer = `${item.singer}${isShowAlbumName && item.meta.albumName ? ` · ${item.meta.albumName}` : ''}`
+  const singer = item.singer
+  const subParts: string[] = [singer]
+  if (isShowAlbumName && item.meta.albumName) subParts.push(item.meta.albumName)
+  if (isShowInterval && item.interval) subParts.push(item.interval)
+  const subText = subParts.join(' · ')
 
   return (
     <View style={{
@@ -62,10 +66,6 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
       height: ITEM_HEIGHT,
       backgroundColor: isSelected ? theme['c-primary-background-hover'] : 'rgba(0,0,0,0)',
     }}>
-      {/*
-        主体区域：用 TVButton（TvFocusView），遥控器聚焦时显示统一绿色边框
-        长按 OK 键触发 onLongPress → 相当于弹出菜单
-      */}
       <TVButton
         style={styles.listItemLeft as ViewStyle}
         onPress={() => { onPress(item, index) }}
@@ -73,23 +73,17 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
         borderRadius={6}
       >
         <View style={styles.listItemLeftInner}>
-          <Text style={styles.sn} size={13} color={theme['c-300']}>{index + 1}</Text>
+          <Text style={styles.sn} size={15} color={theme['c-primary']}>{index + 1}</Text>
           <View style={styles.itemInfo}>
             <Text numberOfLines={1} size={15}>{item.name}</Text>
             <View style={styles.listItemSingle}>
               {tagInfo.type ? <Badge type={tagInfo.type}>{tagInfo.text}</Badge> : null}
               {showSource ? <Badge type="tertiary">{item.source}</Badge> : null}
-              <Text style={styles.listItemSingleText} size={12} color={theme['c-500']} numberOfLines={1}>{singer}</Text>
+              <Text style={styles.listItemSingleText} size={12} color={theme['c-500']} numberOfLines={1}>{subText}</Text>
             </View>
           </View>
         </View>
       </TVButton>
-      {/* 时长显示移到 TVButton 外面，避免与焦点框重叠 */}
-      {isShowInterval
-        ? <Text style={styles.interval} size={12} color={theme['c-250']} numberOfLines={1}>{item.interval}</Text>
-        : null
-      }
-      {/* 更多菜单按钮：同样使用 TVButton，保持绿色边框一致 */}
       <TVButton
         ref={moreButtonRef}
         onPress={handleShowMenu}
@@ -129,31 +123,28 @@ const styles = createStyle({
     height: '100%',
   },
   sn: {
-    width: 42,
+    width: 48,
     textAlign: 'center',
     paddingLeft: 3,
     paddingRight: 3,
+    fontWeight: '600',
   },
   itemInfo: {
     flexGrow: 1,
     flexShrink: 1,
-    paddingRight: 8,  // 右侧留空，防止文字贴近焦点框右边缘
+    paddingRight: 8,
+    justifyContent: 'center',
   },
   listItemSingle: {
     paddingTop: 3,
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
   listItemSingleText: {
     flexGrow: 0,
     flexShrink: 1,
     fontWeight: '300',
-  },
-  // 时长显示在 TVButton 外部，左移避开焦点框
-  interval: {
-    paddingHorizontal: 10,
-    minWidth: 46,
-    textAlign: 'right',
   },
   moreButton: {
     height: '80%',
