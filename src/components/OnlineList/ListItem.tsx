@@ -73,9 +73,11 @@ export default memo(({ item, index, showSource, onPress, onLongPress, onShowMenu
         borderRadius={6}
       >
         <View style={styles.listItemLeftInner}>
-          <Text style={styles.sn} size={15} color={theme['c-primary']}>{index + 1}</Text>
+          {/* 序号颜色改为 theme['c-font'] */}
+          <Text style={styles.sn} size={15} color={theme['c-font']}>{index + 1}</Text>
           <View style={styles.itemInfo}>
-            <Text numberOfLines={1} size={15}>{item.name}</Text>
+            {/* 歌曲名称颜色改为始终使用 theme['c-primary'] */}
+            <Text numberOfLines={1} size={15} color={theme['c-primary']}>{item.name}</Text>
             <View style={styles.listItemSingle}>
               {tagInfo.type ? <Badge type={tagInfo.type}>{tagInfo.text}</Badge> : null}
               {showSource ? <Badge type="tertiary">{item.source}</Badge> : null}
