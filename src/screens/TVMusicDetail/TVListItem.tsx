@@ -70,7 +70,6 @@ export const MyListItem = forwardRef<TVListItemHandle, {
 
   return (
     <View style={[styles.row, { height: ITEM_HEIGHT }]}>
-      {/* 主按钮：lockHorizontal，左键→onMainLeft，右键→聚焦···  */}
       <TVButton
         ref={mainRef}
         style={styles.main}
@@ -85,10 +84,10 @@ export const MyListItem = forwardRef<TVListItemHandle, {
         <View style={styles.inner}>
           {isActive
             ? <Icon style={styles.sn} name="play-outline" size={16} color={theme['c-primary']} />
-            : <Text style={styles.sn} size={15} color={theme['c-primary']}>{index + 1}</Text>
+            : <Text style={styles.sn} size={15} color={theme['c-font']}>{index + 1}</Text>
           }
           <View style={styles.nameWrap}>
-            <Text numberOfLines={1} size={15} color={isActive ? theme['c-primary'] : theme['c-font']}>
+            <Text numberOfLines={1} size={15} color={theme['c-primary']}>
               {item.name}
             </Text>
             <Text style={styles.subInfo} size={12} color={theme['c-500']} numberOfLines={1}>
@@ -98,7 +97,6 @@ export const MyListItem = forwardRef<TVListItemHandle, {
         </View>
       </TVButton>
 
-      {/* 三点按钮：lockHorizontal，左键→聚焦主按钮，右键→onMoreRight */}
       <TVButton
         ref={moreRef}
         style={styles.more}
@@ -161,9 +159,9 @@ const TVListItem = forwardRef<TVListItemHandle, {
         onPress={() => onPress(item, index)}
       >
         <View style={styles.inner}>
-          <Text style={styles.sn} size={15} color={theme['c-primary']}>{index + 1}</Text>
+          <Text style={styles.sn} size={15} color={theme['c-font']}>{index + 1}</Text>
           <View style={styles.nameWrap}>
-            <Text numberOfLines={1} size={15} color={theme['c-font']}>{item.name}</Text>
+            <Text numberOfLines={1} size={15} color={theme['c-primary']}>{item.name}</Text>
             <View style={styles.subRow}>
               {qualityTag.type ? <Badge type={qualityTag.type}>{qualityTag.text}</Badge> : null}
               <Text style={styles.subInfo} size={12} color={theme['c-500']} numberOfLines={1}>{subText}</Text>
