@@ -12,6 +12,7 @@ import { useTheme } from '@/store/theme/hook'
 import TVButton, { type TVButtonType } from '@/components/common/TVButton'
 import { scaleSizeH } from '@/utils/pixelRatio'
 import { LIST_ITEM_HEIGHT } from '@/config/constant'
+import { useSettingValue } from '@/store/setting/hook'
 
 export const ITEM_HEIGHT = (scaleSizeH(LIST_ITEM_HEIGHT) * 1.15) || (LIST_ITEM_HEIGHT * 1.15)
 
@@ -83,17 +84,17 @@ export const MyListItem = forwardRef<TVListItemHandle, {
       >
         <View style={styles.inner}>
           {isActive
-            ? <Icon style={styles.sn} name="play-outline" size={14} color={theme['c-primary']} />
-            : <Text style={styles.sn} size={13} color={theme['c-300']}>{index + 1}</Text>
+            ? <Icon style={styles.sn} name="play-outline" size={16} color={theme['c-primary']} />
+            : <Text style={styles.sn} size={15} color={theme['c-primary']}>{index + 1}</Text>
           }
           <View style={styles.nameWrap}>
             <Text numberOfLines={1} size={15} color={isActive ? theme['c-primary'] : theme['c-font']}>
               {item.name}
             </Text>
+            <Text style={styles.subInfo} size={12} color={theme['c-500']} numberOfLines={1}>
+              {item.singer}
+            </Text>
           </View>
-          <Text style={styles.singer} size={13} color={theme['c-500']} numberOfLines={1}>
-            {item.singer}
-          </Text>
         </View>
       </TVButton>
 
@@ -127,6 +128,8 @@ const TVListItem = forwardRef<TVListItemHandle, {
   const mainRef = useRef<TVButtonType>(null)
   const moreRef = useRef<TVButtonType>(null)
   const qualityTag = useQualityTag(item)
+  const isShowAlbumName = useSettingValue('list.isShowAlbumName')
+  const isShowInterval = useSettingValue('list.isShowInterval')
 
   useImperativeHandle(ref, () => ({
     focusMain() { mainRef.current?.requestFocus() },
@@ -138,6 +141,11 @@ const TVListItem = forwardRef<TVListItemHandle, {
       onShowMenu(item, index, { x: Math.ceil(px), y: Math.ceil(py), w: Math.ceil(width), h: Math.ceil(height) })
     })
   }
+
+  const subParts: string[] = [item.singer]
+  if (isShowAlbumName && item.meta.albumName) subParts.push(item.meta.albumName)
+  if (isShowInterval && item.interval) subParts.push(item.interval)
+  const subText = subParts.join(' · ')
 
   return (
     <View style={[styles.row, { height: ITEM_HEIGHT }]}>
@@ -153,14 +161,14 @@ const TVListItem = forwardRef<TVListItemHandle, {
         onPress={() => onPress(item, index)}
       >
         <View style={styles.inner}>
-          <Text style={styles.sn} size={13} color={theme['c-300']}>{index + 1}</Text>
+          <Text style={styles.sn} size={15} color={theme['c-primary']}>{index + 1}</Text>
           <View style={styles.nameWrap}>
             <Text numberOfLines={1} size={15} color={theme['c-font']}>{item.name}</Text>
+            <View style={styles.subRow}>
+              {qualityTag.type ? <Badge type={qualityTag.type}>{qualityTag.text}</Badge> : null}
+              <Text style={styles.subInfo} size={12} color={theme['c-500']} numberOfLines={1}>{subText}</Text>
+            </View>
           </View>
-          {qualityTag.type ? <Badge type={qualityTag.type}>{qualityTag.text}</Badge> : null}
-          <Text style={styles.singer} size={13} color={theme['c-500']} numberOfLines={1}>
-            {item.singer}
-          </Text>
         </View>
       </TVButton>
 
@@ -201,19 +209,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   sn: {
-    width: 44,
+    width: 48,
     textAlign: 'center',
+    fontWeight: '600',
   },
   nameWrap: {
     flex: 1,
     flexShrink: 1,
     paddingRight: 6,
+    justifyContent: 'center',
   },
-  singer: {
-    flexShrink: 0,
-    maxWidth: '30%',
-    textAlign: 'right',
-    paddingRight: 8,
+  subRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 2,
+    gap: 4,
+  },
+  subInfo: {
+    flexShrink: 1,
+    fontWeight: '300',
   },
   more: {
     height: '80%',
