@@ -8,7 +8,6 @@ import IsStartupAutoPlay from './IsStartupAutoPlay'
 import IsStartupPushPlayDetailScreen from './IsStartupPushPlayDetailScreen'
 import IsUseSystemFileSelector from './IsUseSystemFileSelector'
 import IsShowExitBtn from './IsShowExitBtn'
-import DrawerLayoutPosition from './DrawerLayoutPosition'
 import { useI18n } from '@/lang/i18n'
 
 export default memo(() => {
@@ -21,7 +20,6 @@ export default memo(() => {
       <IsStartupPushPlayDetailScreen />
       <IsShowExitBtn />
       <IsUseSystemFileSelector />
-      <DrawerLayoutPosition />
       <Language />
       <SourceName />
       <Source />
