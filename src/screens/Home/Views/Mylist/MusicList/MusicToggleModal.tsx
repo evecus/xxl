@@ -72,9 +72,8 @@ const Empty = ({ loading, error, onReload }: { loading: boolean, error: boolean,
   )
 }
 
-const ListItem = memo(({ info, isFirst, onPlay, onOpenDetail }: {
+const ListItem = memo(({ info, onPlay, onOpenDetail }: {
   info: LX.Music.MusicInfoOnline
-  isFirst: boolean
   onPlay: (info: LX.Music.MusicInfoOnline) => void
   onOpenDetail: (info: LX.Music.MusicInfoOnline) => void
 }) => {
@@ -106,14 +105,14 @@ const ListItem = memo(({ info, isFirst, onPlay, onOpenDetail }: {
         <TVButton style={styles.listItemBtn} onPress={() => { onOpenDetail(info) }} borderRadius={6}>
           <Icon name="share" style={{ color: theme['c-button-font'] }} size={18} />
         </TVButton>
-        <TVButton style={styles.listItemBtn} hasTVPreferredFocus={isFirst} onPress={() => { onPlay(info) }} borderRadius={6}>
+        <TVButton style={styles.listItemBtn} onPress={() => { onPlay(info) }} borderRadius={6}>
           <Icon name="play" style={{ color: theme['c-button-font'] }} size={18} />
         </TVButton>
       </View>
     </View>
   )
 }, (prevProps, nextProps) => {
-  return prevProps.info === nextProps.info && prevProps.isFirst === nextProps.isFirst
+  return prevProps.info === nextProps.info
 })
 
 const List = ({ source, lists, onPlay }: {
@@ -138,8 +137,8 @@ const List = ({ source, lists, onPlay }: {
     void handleShowMusicSourceDetail(musicInfo)
   }, [])
 
-  const renderItem = useCallback(({ item, index }: { item: LX.Music.MusicInfoOnline, index: number }) => {
-    return <ListItem info={item} isFirst={index === 0} onPlay={onPlay} onOpenDetail={openDetail} />
+  const renderItem = useCallback(({ item }: { item: LX.Music.MusicInfoOnline, index: number }) => {
+    return <ListItem info={item} onPlay={onPlay} onOpenDetail={openDetail} />
   }, [onPlay, openDetail])
   const getkey = useCallback<NonNullable<FlatListProps['keyExtractor']>>(item => item.id, [])
   const getItemLayout = useCallback<NonNullable<FlatListProps['getItemLayout']>>((data, index) => {
@@ -216,8 +215,9 @@ const SourceDetail = ({ info, onConfirm, toggleSource }: { info: LX.Music.MusicI
       }
       </View>
       <TVButton
-        onPress={() => { if (toggleSource) onConfirm(toggleSource) }}
+        onPress={() => { onConfirm(toggleSource!) }}
         style={{ ...styles.button, backgroundColor: theme['c-button-background'], opacity: !toggleSource ? 0.4 : 1 }}
+        disabled={!toggleSource}
         borderRadius={BorderRadius.normal}
       >
         <Text color={theme['c-button-font']}>{t('music_toggle__confirm')}</Text>
@@ -290,7 +290,7 @@ const Modal = forwardRef<ModalType, {}>((props, ref) => {
   }, [])
 
   return (
-    <Dialog ref={dialogRef}>
+    <Dialog ref={dialogRef} closeBtn={false}>
       <View style={styles.container}>
         {
           sourceInfo.sourceInfo.length
