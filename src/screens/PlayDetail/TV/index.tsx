@@ -227,7 +227,7 @@ const formatTime = (sec: number) => {
   return `${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')}`
 }
 
-const AUTO_COMMIT_MS = 2000
+const AUTO_COMMIT_MS = 1000
 
 const SeekBar = memo(({ progress, duration, buffered, nowPlayTimeStr, maxPlayTimeStr }: {
   progress: number
