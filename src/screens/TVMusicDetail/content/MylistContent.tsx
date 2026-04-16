@@ -15,6 +15,7 @@ import { handlePlayLater, handleRemove } from '@/screens/Home/Views/Mylist/Music
 import ListMenu, { type ListMenuType, type Position } from '@/screens/Home/Views/Mylist/MusicList/ListMenu'
 import ListMusicAdd, { type MusicAddModalType } from '@/components/MusicAddModal'
 import ListMusicMultiAdd, { type MusicMultiAddModalType } from '@/components/MusicMultiAddModal'
+import MusicToggleModal, { type MusicToggleModalType } from '@/screens/Home/Views/Mylist/MusicList/MusicToggleModal'
 
 export interface MylistContentType {
   _type: 'mylist'
@@ -29,6 +30,7 @@ export default forwardRef<MylistContentType, Props>(({ id }, ref) => {
   const listMenuRef = useRef<ListMenuType>(null)
   const listMusicAddRef = useRef<MusicAddModalType>(null)
   const listMusicMultiAddRef = useRef<MusicMultiAddModalType>(null)
+  const musicToggleModalRef = useRef<MusicToggleModalType>(null)
   const isUnmountedRef = useRef(false)
 
   const playMusicInfo = usePlayMusicInfo()
@@ -101,8 +103,9 @@ export default forwardRef<MylistContentType, Props>(({ id }, ref) => {
         }}
         onDislike={() => {}}
         onRemove={info => { handleRemove(info.listId, info.musicInfo, info.selectedList, () => {}) }}
-        onToggleSource={() => {}}
+        onToggleSource={info => { musicToggleModalRef.current?.show({ musicInfo: info.musicInfo, listId: info.listId }) }}
       />
+      <MusicToggleModal ref={musicToggleModalRef} />
     </View>
   )
 })
