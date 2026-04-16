@@ -74,8 +74,8 @@ const useFocusColor = () => {
   // 提取 rgb 分量，生成半透明背景色
   const rgba = colorStr.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
   const bgColor = rgba
-    ? `rgba(${rgba[1]}, ${rgba[2]}, ${rgba[3]}, 0.3)`
-    : 'rgba(52, 152, 219, 0.3)'
+    ? `rgba(${rgba[1]}, ${rgba[2]}, ${rgba[3]}, 0.15)`
+    : 'rgba(52, 152, 219, 0.15)'
   return { focusColor: parseColorToInt(colorStr), bgColor }
 }
 
