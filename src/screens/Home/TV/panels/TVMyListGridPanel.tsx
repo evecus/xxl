@@ -15,7 +15,9 @@ import musicSdk from '@/utils/musicSdk'
 import listState from '@/store/list/state'
 import { navigations } from '@/navigation'
 import commonState from '@/store/common/state'
-import { handleRemove, handleSync } from '@/screens/Home/Views/Mylist/MyList/listAction'
+import { handleSync } from '@/screens/Home/Views/Mylist/MyList/listAction'
+import { removeUserList } from '@/core/list'
+import TVExitDialog, { type TVExitDialogType } from '@/components/common/TVExitDialog'
 import ListNameEdit, { type ListNameEditType } from '@/screens/Home/Views/Mylist/MyList/ListNameEdit'
 import ListMusicSort, { type ListMusicSortType } from '@/screens/Home/Views/Mylist/MyList/ListMusicSort'
 import DuplicateMusic, { type DuplicateMusicType } from '@/screens/Home/Views/Mylist/MyList/DuplicateMusic'
@@ -121,6 +123,8 @@ export default memo(forwardRef<TVMyListGridPanelType>((_, ref) => {
   // 顶部标题区域的 ref（用于 back 时还焦点）
   const titleAreaRef = useRef<TVButtonType>(null)
 
+  const removeListDialogRef = useRef<TVExitDialogType>(null)
+
   const listNameEditRef = useRef<ListNameEditType>(null)
   const listMusicSortRef = useRef<ListMusicSortType>(null)
   const duplicateMusicRef = useRef<DuplicateMusicType>(null)
@@ -210,7 +214,12 @@ export default memo(forwardRef<TVMyListGridPanelType>((_, ref) => {
       case 'export': listImportExportRef.current?.export(listInfo, index); break
       case 'local_file': listImportExportRef.current?.selectFile(listInfo, index); break
       case 'sync': handleSync(listInfo as LX.List.UserListInfo); break
-      case 'remove': handleRemove(listInfo as LX.List.UserListInfo); break
+      case 'remove':
+        removeListDialogRef.current?.show(
+          () => { void removeUserList([(listInfo as LX.List.UserListInfo).id]) },
+          global.i18n.t('list_remove_tip', { name: listInfo.name }),
+        )
+        break
     }
   }, [])
 
@@ -271,6 +280,7 @@ export default memo(forwardRef<TVMyListGridPanelType>((_, ref) => {
       <ListMusicSort ref={listMusicSortRef} />
       <DuplicateMusic ref={duplicateMusicRef} />
       <ListImportExport ref={listImportExportRef} />
+      <TVExitDialog ref={removeListDialogRef} />
     </View>
   )
 }))
