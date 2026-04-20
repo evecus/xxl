@@ -7,7 +7,6 @@ import Language from './Language'
 import IsStartupAutoPlay from './IsStartupAutoPlay'
 import IsStartupPushPlayDetailScreen from './IsStartupPushPlayDetailScreen'
 import IsUseSystemFileSelector from './IsUseSystemFileSelector'
-import IsShowExitBtn from './IsShowExitBtn'
 import { useI18n } from '@/lang/i18n'
 
 export default memo(() => {
@@ -18,7 +17,6 @@ export default memo(() => {
     <Section title={t('setting_basic')}>
       <IsStartupAutoPlay />
       <IsStartupPushPlayDetailScreen />
-      <IsShowExitBtn />
       <IsUseSystemFileSelector />
       <Language />
       <SourceName />
