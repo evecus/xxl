@@ -39,10 +39,8 @@ export default forwardRef<MylistContentType, Props>(({ id }, ref) => {
 
   useImperativeHandle(ref, () => ({ _type: 'mylist' }))
 
-  useEffect(() => {
-    isUnmountedRef.current = false
+  const loadList = useCallback(() => {
     listRef.current?.setStatus('loading')
-
     getListMusics(id).then(list => {
       if (isUnmountedRef.current) return
       const activeIndex = (playMusicInfo.listId === id) ? playInfo.playIndex : -1
@@ -51,10 +49,36 @@ export default forwardRef<MylistContentType, Props>(({ id }, ref) => {
     }).catch(() => {
       listRef.current?.setStatus('error')
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
+  useEffect(() => {
+    isUnmountedRef.current = false
+    loadList()
     return () => { isUnmountedRef.current = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
+
+  // 监听歌曲移除/添加/移动事件，自动刷新列表
+  useEffect(() => {
+    const handleMusicRemove = (listId: string) => {
+      if (listId === id && !isUnmountedRef.current) loadList()
+    }
+    const handleMusicAdd = (listId: string) => {
+      if (listId === id && !isUnmountedRef.current) loadList()
+    }
+    const handleMusicMove = (fromId: string, toId: string) => {
+      if ((fromId === id || toId === id) && !isUnmountedRef.current) loadList()
+    }
+    global.list_event.on('list_music_remove', handleMusicRemove)
+    global.list_event.on('list_music_add', handleMusicAdd)
+    global.list_event.on('list_music_move', handleMusicMove)
+    return () => {
+      global.list_event.off('list_music_remove', handleMusicRemove)
+      global.list_event.off('list_music_add', handleMusicAdd)
+      global.list_event.off('list_music_move', handleMusicMove)
+    }
+  }, [id, loadList])
 
   const handlePress = useCallback((item: LX.Music.MusicInfo, index: number) => {
     void playList(id, index)
