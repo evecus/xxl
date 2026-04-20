@@ -18,6 +18,7 @@ import Image from '@/components/common/Image'
 import TVButton, { type TVButtonType } from '@/components/common/TVButton'
 import TVExitDialog, { type TVExitDialogType } from '@/components/common/TVExitDialog'
 import { exitApp, setNavActiveId } from '@/core/common'
+import { toast } from '@/utils/tools'
 import { useBackHandler } from '@/utils/hooks/useBackHandler'
 import { navigations } from '@/navigation'
 import commonState from '@/store/common/state'
@@ -241,6 +242,8 @@ export default memo(() => {
     }
   }, [])
 
+  const lastBackPressRef = useRef<number>(0)
+
   const handleBack = useCallback(() => {
     const currentId = commonState.navActiveId
 
@@ -293,13 +296,24 @@ export default memo(() => {
 
     // ── 层级 4：焦点在左侧栏 ──
     if (gFocusZone === 'sidebar') {
-      // 无论当前在哪个页面，直接弹退出确认
-      exitDialogRef.current?.show(() => exitApp('Back Btn'))
+      const now = Date.now()
+      if (now - lastBackPressRef.current < 2000) {
+        exitApp('Back Btn Double Press')
+      } else {
+        lastBackPressRef.current = now
+        toast(global.i18n.t('press_back_again_to_exit'))
+      }
       return true
     }
 
     // 兜底：弹退出
-    exitDialogRef.current?.show(() => exitApp('Back Btn'))
+    const now = Date.now()
+    if (now - lastBackPressRef.current < 2000) {
+      exitApp('Back Btn Double Press')
+    } else {
+      lastBackPressRef.current = now
+      toast(global.i18n.t('press_back_again_to_exit'))
+    }
     return true
   }, [getPanelRef])
 
