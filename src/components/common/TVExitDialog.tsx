@@ -4,7 +4,7 @@
  * - 两个按钮均可被遥控器焦点框选中
  * - "我不"按钮默认获得焦点，防止误触退出
  */
-import { useRef, useImperativeHandle, forwardRef } from 'react'
+import { useRef, useImperativeHandle, forwardRef, useState } from 'react'
 import { View, StyleSheet } from 'react-native'
 import Modal, { type ModalType } from './Modal'
 import TVButton from './TVButton'
@@ -13,7 +13,7 @@ import { useTheme } from '@/store/theme/hook'
 import { useI18n } from '@/lang'
 
 export interface TVExitDialogType {
-  show: (onConfirm: () => void) => void
+  show: (onConfirm: () => void, message?: string) => void
 }
 
 export default forwardRef<TVExitDialogType>((_, ref) => {
@@ -21,10 +21,12 @@ export default forwardRef<TVExitDialogType>((_, ref) => {
   const t = useI18n()
   const modalRef = useRef<ModalType>(null)
   const onConfirmRef = useRef<() => void>(() => {})
+  const [message, setMessage] = useState<string>('')
 
   useImperativeHandle(ref, () => ({
-    show(onConfirm) {
+    show(onConfirm, msg?) {
       onConfirmRef.current = onConfirm
+      setMessage(msg ?? t('exit_app_tip'))
       modalRef.current?.setVisible(true)
     },
   }))
@@ -52,7 +54,7 @@ export default forwardRef<TVExitDialogType>((_, ref) => {
           {/* 标题栏：背景与底层背景保持一致，文字为主体色 */}
           <View style={[s.header, { backgroundColor: theme['c-content-background'] }]}>
             <Text size={16} color={theme['c-primary']}>
-              {t('exit_app_tip')}
+              {message}
             </Text>
           </View>
 
