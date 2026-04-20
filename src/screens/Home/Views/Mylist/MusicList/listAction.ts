@@ -35,7 +35,13 @@ export const handleRemove = (listId: SelectInfo['listId'], musicInfo: SelectInfo
       onCancelSelect()
     })
   } else {
-    void removeListMusics(listId, [musicInfo.id])
+    void confirmDialog({
+      message: global.i18n.t('list_remove_music_tip', { name: musicInfo.name }),
+      confirmButtonText: global.i18n.t('list_remove_tip_button'),
+    }).then(isRemove => {
+      if (!isRemove) return
+      void removeListMusics(listId, [musicInfo.id])
+    })
   }
 }
 
