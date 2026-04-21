@@ -61,7 +61,7 @@ export default memo(forwardRef<TVSettingPanelType>((_, ref) => {
         </ScrollView>
       </View>
 
-      <ScrollView style={s.content} keyboardShouldPersistTaps="always">
+      <ScrollView style={s.content} keyboardShouldPersistTaps="always" onFocus={() => setFocusZone('content')}>
         <View style={s.contentInner}>
           <Main ref={mainRef} />
         </View>
