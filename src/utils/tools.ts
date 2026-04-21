@@ -190,6 +190,17 @@ export const confirmDialog = async({
   confirmButtonText = global.i18n.t('dialog_confirm'),
   bgClose = true,
 }) => {
+  if (global.lx.showConfirmDialog) {
+    return new Promise<boolean>(resolve => {
+      global.lx.showConfirmDialog!({
+        message: title ? `${title}\n${message}` : message,
+        cancelButtonText,
+        confirmButtonText,
+        onCancel: () => resolve(false),
+        onConfirm: () => resolve(true),
+      })
+    })
+  }
   return new Promise<boolean>(resolve => {
     Alert.alert(title, message, [
       {
