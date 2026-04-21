@@ -135,12 +135,35 @@ const BoardCard = memo(({ item, theme, onOpen }: {
     <View style={s.cardWrap}>
       <TVButton
         ref={btnRef}
-        style={[s.card, { backgroundColor: theme['c-primary-background'] }]}
+        style={[s.card, { backgroundColor: '#f5f3ff' }]}
         borderRadius={8}
         onPress={() => { if (btnRef.current) onOpen(item, btnRef.current) }}
         onFocus={() => setFocusZone('content')}
       >
-        <Text size={14} color={theme['c-primary']} style={s.cardLabel}>排行榜</Text>
+        <View style={s.podiumWrap}>
+          {/* 皇冠 */}
+          <View style={s.crownWrap}>
+            <View style={s.crownBase}>
+              <View style={[s.crownPeak, { left: 0 }]} />
+              <View style={[s.crownPeak, { left: '40%' }]} />
+              <View style={[s.crownPeak, { right: 0 }]} />
+            </View>
+          </View>
+          {/* 领奖台 */}
+          <View style={s.podiumRow}>
+            <View style={s.podiumColWrap}>
+              <Text style={s.podiumNum}>2</Text>
+              <View style={[s.podiumBar, { height: 36, backgroundColor: '#a78bfa', opacity: 0.75 }]} />
+            </View>
+            <View style={s.podiumColWrap}>
+              <View style={[s.podiumBar, { height: 52, backgroundColor: '#7c3aed', opacity: 0.9 }]} />
+            </View>
+            <View style={s.podiumColWrap}>
+              <Text style={s.podiumNum}>3</Text>
+              <View style={[s.podiumBar, { height: 24, backgroundColor: '#c4b5fd', opacity: 0.8 }]} />
+            </View>
+          </View>
+        </View>
       </TVButton>
       <Text style={s.cardName} size={12} color={theme['c-font']} numberOfLines={2}>{item.name}</Text>
     </View>
@@ -166,7 +189,14 @@ const s = StyleSheet.create({
   },
   gridContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 },
   cardWrap: { flex: 1, alignItems: 'center', paddingHorizontal: 8, paddingBottom: 20 },
-  card: { width: '100%', aspectRatio: 1.2, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
-  cardLabel: { fontWeight: '500' },
+  card: { width: '100%', aspectRatio: 1.2, borderRadius: 8, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+  podiumWrap: { flex: 1, width: '100%', justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 10 },
+  crownWrap: { marginBottom: 4, alignItems: 'center' },
+  crownBase: { width: 28, height: 14, backgroundColor: '#fbbf24', borderRadius: 2, position: 'relative', flexDirection: 'row' },
+  crownPeak: { position: 'absolute', top: -8, width: 8, height: 10, backgroundColor: '#fbbf24', borderRadius: 2 },
+  podiumRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 4 },
+  podiumColWrap: { alignItems: 'center', width: 32 },
+  podiumNum: { fontSize: 11, fontWeight: '700', color: '#7c3aed', marginBottom: 2 },
+  podiumBar: { width: 32, borderTopLeftRadius: 3, borderTopRightRadius: 3 },
   cardName: { marginTop: 6, textAlign: 'center', lineHeight: 18 },
 })
