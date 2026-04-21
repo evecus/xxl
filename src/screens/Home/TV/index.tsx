@@ -17,8 +17,8 @@ import { Icon } from '@/components/common/Icon'
 import Image from '@/components/common/Image'
 import TVButton, { type TVButtonType } from '@/components/common/TVButton'
 import TVExitDialog, { type TVExitDialogType } from '@/components/common/TVExitDialog'
+import TVConfirmDialog, { type TVConfirmDialogType } from '@/components/common/TVConfirmDialog'
 import { exitApp, setNavActiveId } from '@/core/common'
-import { toast } from '@/utils/tools'
 import { useBackHandler } from '@/utils/hooks/useBackHandler'
 import { navigations } from '@/navigation'
 import commonState from '@/store/common/state'
@@ -170,6 +170,16 @@ const ContentArea = memo(({
 export default memo(() => {
   const theme = useTheme()
   const exitDialogRef = useRef<TVExitDialogType>(null)
+  const confirmDialogRef = useRef<TVConfirmDialogType>(null)
+
+  useEffect(() => {
+    global.lx.showConfirmDialog = (options) => {
+      confirmDialogRef.current?.show(options)
+    }
+    return () => {
+      global.lx.showConfirmDialog = undefined
+    }
+  }, [])
 
   // panel refs
   const searchRef      = useRef<TVSearchPanelType>(null)
@@ -242,8 +252,6 @@ export default memo(() => {
     }
   }, [])
 
-  const lastBackPressRef = useRef<number>(0)
-
   const handleBack = useCallback(() => {
     const currentId = commonState.navActiveId
 
@@ -265,7 +273,7 @@ export default memo(() => {
     }
 
     // ── 层级 2：搜索页特殊处理 → 任何位置直接推到侧边栏搜索图标 ──
-    if (currentId === 'nav_search' && gFocusZone !== 'sidebar') {
+    if (currentId === 'nav_search') {
       const targetBtn = navBtnRefs.current.get('nav_search')
       if (targetBtn) {
         targetBtn.requestFocus()
@@ -296,24 +304,21 @@ export default memo(() => {
 
     // ── 层级 4：焦点在左侧栏 ──
     if (gFocusZone === 'sidebar') {
-      const now = Date.now()
-      if (now - lastBackPressRef.current < 2000) {
-        exitApp('Back Btn Double Press')
-      } else {
-        lastBackPressRef.current = now
-        toast(global.i18n.t('press_back_again_to_exit'))
+      if (currentId !== 'nav_songlist') {
+        // 切回歌单页，焦点给歌单图标
+        setNavActiveId('nav_songlist')
+        requestAnimationFrame(() => {
+          navBtnRefs.current.get('nav_songlist')?.requestFocus()
+        })
+        return true
       }
+      // 已在歌单页 → 弹退出确认
+      exitDialogRef.current?.show(() => exitApp('Back Btn'))
       return true
     }
 
     // 兜底：弹退出
-    const now = Date.now()
-    if (now - lastBackPressRef.current < 2000) {
-      exitApp('Back Btn Double Press')
-    } else {
-      lastBackPressRef.current = now
-      toast(global.i18n.t('press_back_again_to_exit'))
-    }
+    exitDialogRef.current?.show(() => exitApp('Back Btn'))
     return true
   }, [getPanelRef])
 
@@ -336,6 +341,7 @@ export default memo(() => {
         />
       </View>
       <TVExitDialog ref={exitDialogRef} />
+      <TVConfirmDialog ref={confirmDialogRef} />
     </View>
   )
 })
