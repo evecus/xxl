@@ -305,12 +305,23 @@ const CardItem = memo(({
     <View style={s.cardWrap}>
       <TVButton
         ref={cardBtnRef}
-        style={[s.card, { backgroundColor: theme['c-primary-background'] }]}
+        style={[s.card, { backgroundColor: '#f5f5f7' }]}
         borderRadius={8}
         onPress={() => { if (cardBtnRef.current) onOpen(listInfo, cardBtnRef.current) }}
         onFocus={() => setFocusZone('content')}
       >
-        <Text size={14} color={theme['c-primary']} style={s.cardLabel}>列表</Text>
+        <View style={s.coverWrap}>
+          <View style={s.coverAccent} />
+          <View style={s.coverLines}>
+            <View style={[s.coverLine, { backgroundColor: '#fbbf24', width: '100%' }]} />
+            <View style={[s.coverLineSub, { width: '75%' }]} />
+            <View style={[s.coverLine, { backgroundColor: '#34d399', width: '100%' }]} />
+            <View style={[s.coverLineSub, { width: '55%' }]} />
+            <View style={[s.coverLine, { backgroundColor: '#f87171', width: '100%' }]} />
+            <View style={[s.coverLineSub, { width: '80%' }]} />
+            <View style={[s.coverLine, { backgroundColor: '#818cf8', width: '100%' }]} />
+          </View>
+        </View>
       </TVButton>
       <View style={s.cardBottom}>
         <Text style={s.cardName} size={12} color={theme['c-font']} numberOfLines={2}>
@@ -337,8 +348,12 @@ const s = StyleSheet.create({
   topTitle: { fontWeight: '600' },
   gridContent: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 24 },
   cardWrap: { flex: 1, alignItems: 'center', paddingHorizontal: 8, paddingBottom: 20 },
-  card: { width: '100%', aspectRatio: 1.2, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
-  cardLabel: { fontWeight: '500' },
+  card: { width: '100%', aspectRatio: 1.2, borderRadius: 8, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
+  coverWrap: { flex: 1, flexDirection: 'row', width: '100%', paddingVertical: 14, paddingHorizontal: 0 },
+  coverAccent: { width: 5, borderRadius: 2.5, backgroundColor: '#3b82f6', marginLeft: 14, marginRight: 12, alignSelf: 'stretch' },
+  coverLines: { flex: 1, justifyContent: 'space-between', paddingRight: 14 },
+  coverLine: { height: 7, borderRadius: 3.5 },
+  coverLineSub: { height: 5, borderRadius: 2.5, backgroundColor: '#d1d5db' },
   cardBottom: { flexDirection: 'row', alignItems: 'center', marginTop: 6, width: '100%' },
   cardName: { flex: 1, lineHeight: 18 },
   dotsBtn: { paddingHorizontal: 6, paddingVertical: 4, borderRadius: 6, flexShrink: 0 },
