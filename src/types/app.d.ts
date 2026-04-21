@@ -47,6 +47,17 @@ interface GlobalData {
    */
   homePagerIdle: boolean
 
+  /**
+   * TV 专用自定义确认弹窗，由 Home/TV/index.tsx 注册
+   */
+  showConfirmDialog?: (options: {
+    message: string
+    cancelButtonText?: string
+    confirmButtonText?: string
+    onCancel?: () => void
+    onConfirm?: () => void
+  }) => void
+
   // windowInfo: {
   //   screenW: number
   //   screenH: number
